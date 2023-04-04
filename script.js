@@ -26,6 +26,13 @@ function createCard(cat, el = box) {
                 if (res.status === 200) {
                     like.classList.toggle("fa-solid");
                     like.classList.toggle("fa-regular");
+                    cats = cats.map(c => {
+                        if (c.id === cat.id) {
+                            c.favorite = !cat.favorite;
+                        }
+                        return c;
+                    })
+                    localStorage.setItem("cats-data", JSON.stringify(cats));
                 }
             })
         }
@@ -33,6 +40,7 @@ function createCard(cat, el = box) {
     const trash = document.createElement("i");
     trash.className = "fa-solid fa-trash card__trash";
     trash.addEventListener("click", e => {
+        e.stopPropagation();
         // deleteCard(???, e.currentTarget.parentElement);
         deleteCard(cat.id, card);
     })
@@ -42,6 +50,9 @@ function createCard(cat, el = box) {
         age.innerText = cat.age;
         card.append(age);
     }
+    card.addEventListener("click", e => {
+        location.replace(`page.html?id=${cat.id}`)
+    })
     // card.addEventListener("click", (e) => {
     //     deleteCard(cat.id, card);
     // });
@@ -58,6 +69,8 @@ function deleteCard(id, el) {
                 // console.log(res.status);
                 if (res.status === 200) {
                     el.remove();
+                    cats = cats.filter(c => c.id !== id)
+                    localStorage.setItem("cats-data", JSON.stringify(cats));
                 }
             })
     }
@@ -70,32 +83,7 @@ function deleteCard(id, el) {
     And
     XML
 */
-fetch(path + "/show")
-    .then(function(res) {
-        console.log(res);
-        if (res.statusText === "OK") {
-            /*
-                Все методы res возвращают Promise
-                res.text() => возвращает текстовое содержимое (HTML-файл)
-                res.blob() => возвращает двоичный код (бинарный формат данных) 10 => 00001010 => 0a => файлы (картинки / файл)
-                res.json() => отображает данные в ввиде объекта
-            */
-            return res.json();
-        }
-    })
-    .then(function(data) {
-        // data - отввет от сервера
-        // console.log(data);
-        if (!data.length) {
-            box.innerHTML = "<div class=\"empty\">У вас пока еще нет питомцев</div>"
-        } else {
-            cats = [...data];
-            localStorage.setItem("cats-data", JSON.stringify(data));
-            for (let c of data) {
-                createCard(c, box);
-            }
-        }
-    })
+
 
 /*
     request fetch:
@@ -132,3 +120,46 @@ function addCat(cat) {
     })
 }
 
+
+if (cats) {
+    try {
+        cats = JSON.parse(cats); // сделать из строки объект
+        console.log(cats);
+        for (let cat of cats) {
+            createCard(cat, box);
+            console.log(cat);
+        }
+    } catch(err) {
+        if (err) {
+            cats = null;
+        }
+    }
+} else {
+    // Если котов не было - попросить их с сервера
+    fetch(path + "/show")
+        .then(function(res) {
+            console.log(res);
+            if (res.statusText === "OK") {
+                /*
+                    Все методы res возвращают Promise
+                    res.text() => возвращает текстовое содержимое (HTML-файл)
+                    res.blob() => возвращает двоичный код (бинарный формат данных) 10 => 00001010 => 0a => файлы (картинки / файл)
+                    res.json() => отображает данные в ввиде объекта
+                */
+                return res.json();
+            }
+        })
+        .then(function(data) {
+            // data - отввет от сервера
+            // console.log(data);
+            if (!data.length) {
+                box.innerHTML = "<div class=\"empty\">У вас пока еще нет питомцев</div>"
+            } else {
+                cats = [...data];
+                localStorage.setItem("cats-data", JSON.stringify(data));
+                for (let c of data) {
+                    createCard(c, box);
+                }
+            }
+        })
+}

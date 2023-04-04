@@ -28,17 +28,7 @@ const path = `https://cats.petiteweb.dev/api/single/${user}`;
 */
 let cats = localStorage.getItem("cats-data") // массив с котами
 
-if (cats) {
-    try {
-        cats = JSON.parse(cats); // сделать из строки объект
-        console.log(cats);
-        for (let cat of cats) {
-            createCard(cat);
-        }
-    } catch(e) {
-        cats = null;
-    }
-}
+
 
 // let a = 2;
 // let b = a;
@@ -49,3 +39,8 @@ if (cats) {
 // let d = {...c, c: 5, a: 4}; // деструктуризация (копирование объекта или массивва)
 // c.a = 6;
 // console.log("c", c, ", d", d);
+
+
+// 4БДЗ + ГП => отл
+// 4БДЗ (2+) => хор
+// 3БДЗ (1+) => уд

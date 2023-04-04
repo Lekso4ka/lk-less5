@@ -89,6 +89,8 @@ fetch(path + "/show")
         if (!data.length) {
             box.innerHTML = "<div class=\"empty\">У вас пока еще нет питомцев</div>"
         } else {
+            cats = [...data];
+            localStorage.setItem("cats-data", JSON.stringify(data));
             for (let c of data) {
                 createCard(c, box);
             }

@@ -30,7 +30,13 @@ function createCard(cat, el = box) {
             })
         }
     })
-    card.append(like, name);
+    const trash = document.createElement("i");
+    trash.className = "fa-solid fa-trash card__trash";
+    trash.addEventListener("click", e => {
+        // deleteCard(???, e.currentTarget.parentElement);
+        deleteCard(cat.id, card);
+    })
+    card.append(like, name, trash);
     if (cat.age >= 0) {
         const age = document.createElement("span");
         age.innerText = cat.age;
